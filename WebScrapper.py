@@ -1,22 +1,33 @@
+import string
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
 searchString = ""
 
-def getHtmlSource(prmSearchString):
+def getHtmlSource(prmSearchString,prmStoreType):
+
     driverPath = 'C:\Program Files (x86)\chromedriver.exe'
     options = Options()
     options.headless = True
     options.add_argument("--window-size=1920,1200")
+    l_URL = ""
+
+    #Prepare search String
+    if prmStoreType == "AMAZON":
+        prmSearchString = prmSearchString.replace(" ","+")
+        l_URL= "https://www.amazon.in/s?k="
+    elif prmSearchString == "FLIPKART":
+        prmSearchString = prmSearchString.replace(" ","%20")
+        l_URL = "https://www.flipkart.com/search?q="
 
     driver = webdriver.Chrome(options=options, executable_path=driverPath)
-    driver.get("https://www.amazon.in/s?k=" + prmSearchString)
+    driver.get(l_URL + prmSearchString.replace(" ","+"))
     htmlData = driver.page_source
     l_soup = BeautifulSoup(htmlData,'lxml')
     driver.quit()
     return l_soup
- 
+
 def getAmazonData(prmSearchString):
     productData = ()
     productList = []
@@ -24,7 +35,7 @@ def getAmazonData(prmSearchString):
     #ToDo Page Counter for checking next pages
     pageCounter = 0
 
-    htmlSourceData = getHtmlSource(prmSearchString)
+    htmlSourceData = getHtmlSource(prmSearchString,"AMAZON")
     productEntries = htmlSourceData.find_all('div',class_='sg-col sg-col-4-of-12 sg-col-8-of-16 sg-col-12-of-20 s-list-col-right')   
     productCounter = 0
     for entry in productEntries:
@@ -37,7 +48,7 @@ def getAmazonData(prmSearchString):
         productList.append(productData)
     return productList
 
-searchString = input("Enter Search String to Compare: ").replace(" ","+")
+searchString = input("Enter Search String to Compare: ")
 amaProductList = getAmazonData(searchString)
 for product in amaProductList:
     print("\n")
