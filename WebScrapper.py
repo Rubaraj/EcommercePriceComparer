@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
+import json
 
 driverPath = 'C:\Program Files (x86)\chromedriver.exe'
 searchString = 'iphone+13'
@@ -17,15 +18,16 @@ l_soup = BeautifulSoup(htmlData,'lxml')
 driver.quit()
 
 entries = l_soup.find_all('div',class_='sg-col sg-col-4-of-12 sg-col-8-of-16 sg-col-12-of-20 s-list-col-right')
-
-print('---------------------------')
-
+    
+s = ()
+t=[]
+counter = 0
 for entry in entries:
+    counter = counter + 1
+    price = "None"
     title = entry.find('span',class_='a-size-medium a-color-base a-text-normal').text
-    price = entry.find('span',class_='a-price-whole').text
-
-    print (f''' 
-    Product Name: {title}
-    Price: {price}
-    ''')
-    print('---------------------------')
+    if entry.find('span',class_='a-price-whole') is not None:
+        price = entry.find('span',class_='a-price-whole').text
+    s =  {"product"+str(counter):str(title),"price":str(price)}
+    t.append(s)
+print(t)
