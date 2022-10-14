@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import json
 
 driverPath = 'C:\Program Files (x86)\chromedriver.exe'
-searchString = 'iphone+13'
+searchString = input("Enter Search String: ").replace(" ","+")
 
 options = Options()
 options.headless = True
@@ -30,4 +30,6 @@ for entry in entries:
         price = entry.find('span',class_='a-price-whole').text
     s =  {"product"+str(counter):str(title),"price":str(price)}
     t.append(s)
+    
 print(t)
+print(type(t))
